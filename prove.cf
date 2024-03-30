@@ -1,7 +1,7 @@
 10 yap "lemme cook"
-20 find_out A = 1 run_wit_it 12000
-30 R = 1 + 0
-40 G = 0 + 0
+20 find_out A = 1 run_wit_it 12000000
+30 rizz_up R 1
+40 rizz_up G 0
 50 rizz_up N A
 60 vibe_check N = R finna cook 150
 70 vibe_check N < A finna cook 150

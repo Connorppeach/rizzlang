@@ -94,8 +94,15 @@ void parse (char *pos) {
     addtostr(tmpstr2);
     pos++;
     skipspaces(&pos);
-    sprintf(tmpstr2, "mem[%d];\n", *pos-'A');
-    addtostr(tmpstr2);
+    if(*pos <= 'Z'  &&*pos >= 'A') {
+      sprintf(tmpstr2, "mem[%d];\n", *pos-'A');
+      addtostr(tmpstr2);
+    } else {
+      pos+=readint(pos, &dec);
+      sprintf(tmpstr2, "%d;\n", dec);
+      addtostr(tmpstr2);
+
+    }
   } else if(mcmpstr(tmpstr, "cook") == 1) {
     skipspaces(&pos);
     pos+=readint(pos, &dec);
