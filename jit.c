@@ -56,7 +56,10 @@ int readint(char *s1, int *dec) {
   }
   return e;
 }
-
+void skipspaces(char **p) {
+  while((*((*p)++)) == ' ');
+  (*p)--;  
+}
 char mcmpstr(char *s1, char *s2) {
   char *t1=s1, *t2=s2;
   while(*t1 != '\0' && *t2 != '\0') {
@@ -71,116 +74,107 @@ void parse (char *pos) {
   int dec = 0;
   pos+=cpytospace(pos, tmpstr);
   if(mcmpstr(tmpstr, "yap") == 1) {
-      while((*pos++) == ' ');
-      pos+=cpytoquote(--pos, tmpstr);
-      if(*tmpstr=='"') {
-	sprintf(tmpstr2, "    printf(\"%%s\\n\", %s);\n", tmpstr);
-	addtostr(tmpstr2);
-      } else {
-        sprintf(tmpstr2, "    printf(\"%%d\\n\", mem[%d]);\n", *tmpstr-'A');
-	addtostr(tmpstr2);
-      }
-    } else if(mcmpstr(tmpstr, "outta_pocket") == 1) {
-      while((*pos++) == ' ');
-      pos+=cpytoquote(--pos, tmpstr);
-      sprintf(tmpstr2, "    mem[%d] = rand();\n", *tmpstr-'A');
+    skipspaces(&pos);
+    pos+=cpytoquote(pos, tmpstr);
+    if(*tmpstr=='"') {
+      sprintf(tmpstr2, "    printf(\"%%s\\n\", %s);\n", tmpstr);
       addtostr(tmpstr2);
-    } else if(mcmpstr(tmpstr, "cook") == 1) {
-      while((*pos++) == ' ');
-      pos+=readint(--pos, &dec);
-      sprintf(tmpstr2, "    goto m%d;\n", dec);
+    } else {
+      sprintf(tmpstr2, "    printf(\"%%d\\n\", mem[%d]);\n", *tmpstr-'A');
       addtostr(tmpstr2);
+    }
+  } else if(mcmpstr(tmpstr, "outta_pocket") == 1) {
+    skipspaces(&pos);
+    pos+=cpytoquote(pos, tmpstr);
+    sprintf(tmpstr2, "    mem[%d] = rand();\n", *tmpstr-'A');
+    addtostr(tmpstr2);
+  } else if(mcmpstr(tmpstr, "cook") == 1) {
+    skipspaces(&pos);
+    pos+=readint(pos, &dec);
+    sprintf(tmpstr2, "    goto m%d;\n", dec);
+    addtostr(tmpstr2);
   } else if(mcmpstr(tmpstr, "iykyk") == 1) {
-      while((*pos++) == ' ');
-      pos+=cpytoquote(--pos, tmpstr);
-      sprintf(tmpstr2, "    scanf(\"%%d\", &mem[%d]);\n", *tmpstr-'A');
-      addtostr(tmpstr2);
-    } else if(mcmpstr(tmpstr, "find_out") == 1) {
-      while((*pos++) == ' ');
-      pos+=cpytospace(--pos, tmpstr);
-      char tmp = *tmpstr-'A';
-      sprintf(tmpstr2, "    for(mem[%d] = ", *tmpstr-'A');
-      addtostr(tmpstr2);
-      while(++(*pos) == ' ');
-      pos++;
-      while(++(*pos) == ' ');
-      pos++;
-      while(++(*pos) == ' ');
-      pos++;
-      pos+=readint(pos, &dec);
-      sprintf(tmpstr2, "%d; mem[%d] <= ", dec, tmp);
-      addtostr(tmpstr2);
-      pos++;
-      while((*pos++) == ' ');
-      pos--;
-      pos+=cpytospace(pos, tmpstr);
+    skipspaces(&pos);
+    pos+=cpytoquote(pos, tmpstr);
+    sprintf(tmpstr2, "    scanf(\"%%d\", &mem[%d]);\n", *tmpstr-'A');
+    addtostr(tmpstr2);
+  } else if(mcmpstr(tmpstr, "find_out") == 1) {
+    skipspaces(&pos);
+    pos+=cpytospace(pos, tmpstr);
+    char tmp = *tmpstr-'A';
+    sprintf(tmpstr2, "    for(mem[%d] = ", *tmpstr-'A');
+    addtostr(tmpstr2);
+    while(++(*pos) == ' ');
+    pos++;
+    while(++(*pos) == ' ');
+    pos++;
+    while(++(*pos) == ' ');
+    pos++;
+    pos+=readint(pos, &dec);
+    sprintf(tmpstr2, "%d; mem[%d] <= ", dec, tmp);
+    addtostr(tmpstr2);
+    pos++;
+    skipspaces(&pos);
+    pos+=cpytospace(pos, tmpstr);
       
-      if(mcmpstr(tmpstr, "run_wit_it") == 1) {
-	while((*pos++) == ' ');
-	pos--;
-	pos+=readint(pos, &dec);
-	sprintf(tmpstr2, "%d; mem[%d]++) {\n", dec, tmp);
-	addtostr(tmpstr2);
-      }
+    if(mcmpstr(tmpstr, "run_wit_it") == 1) {
+      skipspaces(&pos);
+      pos+=readint(pos, &dec);
+      sprintf(tmpstr2, "%d; mem[%d]++) {\n", dec, tmp);
+      addtostr(tmpstr2);
+    }
   } else if(mcmpstr(tmpstr, "swipe_left") == 1) {
     sprintf(tmpstr2, "    };\n");
     addtostr(tmpstr2);
   } else if(mcmpstr(tmpstr, "kms") == 1) {
     sprintf(tmpstr2, "    return 0;\n");
     addtostr(tmpstr2);
-    }  else if(mcmpstr(tmpstr, "vibe_check") == 1) {
-      while((*pos++) == ' ');
-      pos+=cpytospace(--pos, tmpstr);
-      char tmp1,tmp2; 
+  }  else if(mcmpstr(tmpstr, "vibe_check") == 1) {
+    while((*pos++) == ' ');
+    pos+=cpytospace(--pos, tmpstr);
+    char tmp1,tmp2; 
      
-      if(*tmpstr <= 'Z'  &&*tmpstr >= 'A')
-	tmp1 = *tmpstr-'A';
-      sprintf(tmpstr2, "    if(mem[%d]", tmp1);
+    if(*tmpstr <= 'Z'  &&*tmpstr >= 'A')
+      tmp1 = *tmpstr-'A';
+    sprintf(tmpstr2, "    if(mem[%d]", tmp1);
+    addtostr(tmpstr2);
+    skipspaces(&pos);
+    if(*pos == '=') {
+      sprintf(tmpstr2, "==");
       addtostr(tmpstr2);
-      while((*pos++) == ' ');
-      pos--;
-      if(*pos == '=') {
-	sprintf(tmpstr2, "==");
-	addtostr(tmpstr2);
-      } else {
-	sprintf(tmpstr2, "%c", *pos);
-	addtostr(tmpstr2);
+    } else {
+      sprintf(tmpstr2, "%c", *pos);
+      addtostr(tmpstr2);
 
-      }
-      pos++;
-      while((*pos++) == ' ');
-      pos--;
-      if(*pos <= 'Z'  &&*pos >= 'A')
-	tmp2 = *pos-'A';
+    }
+    pos++;
+    skipspaces(&pos);
+    if(*pos <= 'Z'  &&*pos >= 'A')
+      tmp2 = *pos-'A';
       
-      sprintf(tmpstr2, "mem[%d]) \n", tmp2);
-      addtostr(tmpstr2);
-      pos++;
-      while((*pos++) == ' ');
-      pos--;
-      pos+=cpytospace(pos, tmpstr);
-      pos++;
-      while((*pos++) == ' ');
-      pos--;
-      if(mcmpstr(tmpstr, "finna") == 1) {
-	parse(pos);
+    sprintf(tmpstr2, "mem[%d]) \n", tmp2);
+    addtostr(tmpstr2);
+    pos++;
+    skipspaces(&pos);
+    pos+=cpytospace(pos, tmpstr);
+    pos++;
+    skipspaces(&pos);
+    if(mcmpstr(tmpstr, "finna") == 1) {
+      parse(pos);
 
 	
 
-      }
+    }
   } else {
     pos--;
-    while((*pos++) == ' ');
-    pos--;
+    skipspaces(&pos);
     sprintf(tmpstr2, "mem[%d] = ", *pos-'A');
     addtostr(tmpstr2);
     pos++;
-    while((*pos++) == ' ');
-    pos--;
+    skipspaces(&pos);
     if(*pos == '=') {
       pos++;
-      while((*pos++) == ' ');
-      pos--;
+      skipspaces(&pos);
       if(*pos <= 'Z'  &&*pos >= 'A') {
 	sprintf(tmpstr2, "mem[%d]", *pos-'A');
 	addtostr(tmpstr2);
@@ -191,14 +185,12 @@ void parse (char *pos) {
 	addtostr(tmpstr2);
       }
       pos++;
-      while((*pos++) == ' ');
-      pos--;
+      skipspaces(&pos);
       pos+=cpytospace(pos, tmpstr);
       sprintf(tmpstr2, "%s", tmpstr);
       addtostr(tmpstr2);
       pos++;
-      while((*pos++) == ' ');
-      pos--;
+      skipspaces(&pos);
       if(*pos <= 'Z'  &&*pos >= 'A') {
 	sprintf(tmpstr2, "mem[%d];", *pos-'A');
 	addtostr(tmpstr2);
@@ -208,8 +200,7 @@ void parse (char *pos) {
 	addtostr(tmpstr2);
       }
       pos++;
-      while((*pos++) == ' ');
-      pos--;
+      skipspaces(&pos);
     }
   }
 
