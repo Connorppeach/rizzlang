@@ -85,8 +85,16 @@ void parse (char *pos) {
     }
   } else if(mcmpstr(tmpstr, "outta_pocket") == 1) {
     skipspaces(&pos);
-    pos+=cpytoquote(pos, tmpstr);
+    pos+=cpytospace(pos, tmpstr);
     sprintf(tmpstr2, "    mem[%d] = rand();\n", *tmpstr-'A');
+    addtostr(tmpstr2);
+  } else if(mcmpstr(tmpstr, "rizz_up") == 1) {
+    skipspaces(&pos);
+    sprintf(tmpstr2, "    mem[%d] = ", *pos-'A');
+    addtostr(tmpstr2);
+    pos++;
+    skipspaces(&pos);
+    sprintf(tmpstr2, "mem[%d];\n", *pos-'A');
     addtostr(tmpstr2);
   } else if(mcmpstr(tmpstr, "cook") == 1) {
     skipspaces(&pos);
@@ -95,7 +103,7 @@ void parse (char *pos) {
     addtostr(tmpstr2);
   } else if(mcmpstr(tmpstr, "iykyk") == 1) {
     skipspaces(&pos);
-    pos+=cpytoquote(pos, tmpstr);
+    pos+=cpytospace(pos, tmpstr);
     sprintf(tmpstr2, "    scanf(\"%%d\", &mem[%d]);\n", *tmpstr-'A');
     addtostr(tmpstr2);
   } else if(mcmpstr(tmpstr, "find_out") == 1) {
@@ -240,8 +248,8 @@ int main (int argc, char **argv) {
   tcc_set_output_type(s, TCC_OUTPUT_MEMORY);
   tcc_set_options(s, "g");
   tcc_add_include_path(s, "/usr/lib/tcc/include");
+  puts(mstr);
   tcc_compile_string(s, mstr);
-  
   int size = tcc_relocate(s);
   if (size == -1)
     return 1;  addtostr(EEOF);
@@ -249,7 +257,6 @@ int main (int argc, char **argv) {
   int (*func)(int argc, char **argv) = tcc_get_symbol(s, "main");
   if (!func)
     return 1;
-  
   func(0, NULL);
   tcc_delete(s);
 }
