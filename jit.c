@@ -248,7 +248,6 @@ int main (int argc, char **argv) {
   tcc_set_output_type(s, TCC_OUTPUT_MEMORY);
   tcc_set_options(s, "g");
   tcc_add_include_path(s, "/usr/lib/tcc/include");
-  puts(mstr);
   tcc_compile_string(s, mstr);
   int size = tcc_relocate(s);
   if (size == -1)
