@@ -1,0 +1,17 @@
+10 yap "lemme cook"
+20 find_out A = 1 run_wit_it 12000000
+30 R = 1 + 0
+40 G = 0 + 0
+50 N = A + 0
+60 vibe_check N = R finna cook 150
+70 vibe_check N < A finna cook 150
+80 E = N % 2
+90 vibe_check E = G finna N = N / 2
+100 vibe_check E = R finna cook 120
+110 cook 60
+120 N = N * 3
+130 N = N + 1
+140 cook 60
+150 swipe_left 
+160 yap "i was not cooking bro"
+170 kms
