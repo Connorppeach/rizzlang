@@ -1,3 +1,2 @@
-gcc compiler.c -o comp
-cat $1 | ./comp > $1.c
-gcc $1.c 
+./rizz $1 f > $1.c
+$2 $1.c 

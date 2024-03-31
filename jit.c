@@ -145,14 +145,19 @@ void parse (char *pos) {
     sprintf(tmpstr2, "    return 0;\n");
     addtostr(tmpstr2);
   }  else if(mcmpstr(tmpstr, "vibe_check") == 1) {
-    while((*pos++) == ' ');
-    pos+=cpytospace(--pos, tmpstr);
+    skipspaces(&pos);
     char tmp1,tmp2; 
-     
-    if(*tmpstr <= 'Z'  &&*tmpstr >= 'A')
+    if(*pos <= 'Z'  &&*pos >= 'A') {
+      pos+=cpytospace(pos, tmpstr);
       tmp1 = *tmpstr-'A';
-    sprintf(tmpstr2, "    if(mem[%d]", tmp1);
-    addtostr(tmpstr2);
+      sprintf(tmpstr2, "    if(mem[%d] ", tmp1);
+      addtostr(tmpstr2);
+    }
+    else {
+      pos+=readint(pos, &dec);
+      sprintf(tmpstr2, "    if(%d ", dec);
+      addtostr(tmpstr2);
+    }
     skipspaces(&pos);
     if(*pos == '=') {
       sprintf(tmpstr2, "==");
@@ -164,11 +169,18 @@ void parse (char *pos) {
     }
     pos++;
     skipspaces(&pos);
-    if(*pos <= 'Z'  &&*pos >= 'A')
-      tmp2 = *pos-'A';
+    if(*pos <= 'Z'  &&*pos >= 'A') {
+      pos+=cpytospace(pos, tmpstr);
+      tmp1 = *tmpstr-'A';
+      sprintf(tmpstr2, " mem[%d])\n", tmp1);
+      addtostr(tmpstr2);
+    }
+    else {
+      pos+=readint(pos, &dec);
+      sprintf(tmpstr2, " %d)\n", dec);
+      addtostr(tmpstr2);
+    }
       
-    sprintf(tmpstr2, "mem[%d]) \n", tmp2);
-    addtostr(tmpstr2);
     pos++;
     skipspaces(&pos);
     pos+=cpytospace(pos, tmpstr);
@@ -190,15 +202,8 @@ void parse (char *pos) {
     if(*pos == '=') {
       pos++;
       skipspaces(&pos);
-      if(*pos <= 'Z'  &&*pos >= 'A') {
-	sprintf(tmpstr2, "mem[%d]", *pos-'A');
-	addtostr(tmpstr2);
-      }
-      else {
-	pos+=cpytospace(pos, tmpstr);
-	sprintf(tmpstr2, "%s", tmpstr);
-	addtostr(tmpstr2);
-      }
+      sprintf(tmpstr2, "mem[%d]", *pos-'A');
+      addtostr(tmpstr2);
       pos++;
       skipspaces(&pos);
       pos+=cpytospace(pos, tmpstr);
@@ -248,7 +253,8 @@ int main (int argc, char **argv) {
 
   }
   addtostr(EEOF);
-  
+
+  if(argc == 2) {
   void *mem;
   TCCState *s = tcc_new();
   tcc_set_lib_path(s, ".");
@@ -259,10 +265,11 @@ int main (int argc, char **argv) {
   int size = tcc_relocate(s);
   if (size == -1)
     return 1;  addtostr(EEOF);
-  
   int (*func)(int argc, char **argv) = tcc_get_symbol(s, "main");
   if (!func)
     return 1;
   func(0, NULL);
   tcc_delete(s);
+  }
+  else puts(mstr);
 }
